@@ -39,6 +39,8 @@ module RequiresCommutativeMonoid
   open FunctionProperties _≈_
   open MoreFunctionProperties _≈_
   open import Relation.Binary.EqReasoning setoid
+  open import Holes.CommutativeMonoid cmon
+  open import Holes.Term using (⌞_⌟)
 
   infix 4 _⊴ᴸ_ _⊴ᴿ_ _⊲ᴸ_ _⊲ᴿ_
 
@@ -55,10 +57,10 @@ module RequiresCommutativeMonoid
     where
       eq =
         begin
-          a            ≈⟨ a≈b∙x ⟩
-          b ∙ x        ≈⟨ ∙-cong b≈c∙y refl ⟩
-          (c ∙ y) ∙ x  ≈⟨ assoc _ _ _ ⟩
-          c ∙ (y ∙ x)  ≈⟨ ∙-cong refl (comm _ _) ⟩
+          a              ≈⟨ a≈b∙x ⟩
+          ⌞ b ⌟ ∙ x      ≈⟨ ∙-cong b≈c∙y refl ⟩
+          (c ∙ y) ∙ x    ≈⟨ assoc _ _ _ ⟩
+          c ∙ ⌞ y ∙ x ⌟  ≈⟨ ∙-cong refl (comm y x) ⟩
           c ∙ (x ∙ y)
         ∎
 
@@ -337,7 +339,6 @@ module RequiresPathAlgebra
       { isEquivalence = isEquivalence
       ; trans         = ⊲ᴸ-trans
       ; compare       = ⊲ᴸ‿tri _≈?_
-      ; <-resp-≈      = ⊲ᴸ-resp
       }
 
   equivalentᴿ : ∀ a b → a + b ≈ b ⇔ a ⊴ᴿ b
