@@ -6,6 +6,8 @@
 
 module Algebra.Path.Properties where
 
+open import Algebra.Path.Structure
+
 open import Data.Empty
 open import Data.Product
 open import Data.Sum
@@ -24,6 +26,8 @@ open import Algebra.Path.Structure
 open import Function.Equality using (module Π)
 open import Function.Equivalence using (_⇔_; equivalence; module Equivalence)
 
+open import Holes.Term using (⌞_⌟)
+
 open Π using (_⟨$⟩_)
 
 rightCanonicalOrder : ∀ {a ℓ} {A : Set a} → Rel A ℓ → Op₂ A → Rel A _
@@ -35,12 +39,12 @@ leftCanonicalOrder _≈_ _∙_ a b = ∃ λ c → a ≈ (b ∙ c)
 module RequiresCommutativeMonoid
        {c ℓ} (cmon : CommutativeMonoid c ℓ) where
 
+  open import Holes.CommutativeMonoid
+
   open CommutativeMonoid cmon
   open FunctionProperties _≈_
   open MoreFunctionProperties _≈_
   open import Relation.Binary.EqReasoning setoid
-  open import Holes.CommutativeMonoid cmon
-  open import Holes.Term using (⌞_⌟)
 
   infix 4 _⊴ᴸ_ _⊴ᴿ_ _⊲ᴸ_ _⊲ᴿ_
 
@@ -58,9 +62,9 @@ module RequiresCommutativeMonoid
       eq =
         begin
           a              ≈⟨ a≈b∙x ⟩
-          ⌞ b ⌟ ∙ x      ≈⟨ ∙-cong b≈c∙y refl ⟩
+          ⌞ b ⌟ ∙ x      ≈⟨ cong! b≈c∙y ⟩
           (c ∙ y) ∙ x    ≈⟨ assoc _ _ _ ⟩
-          c ∙ ⌞ y ∙ x ⌟  ≈⟨ ∙-cong refl (comm y x) ⟩
+          c ∙ ⌞ y ∙ x ⌟  ≈⟨ cong! (comm y x) ⟩
           c ∙ (x ∙ y)
         ∎
 
@@ -104,11 +108,11 @@ module RequiresCommutativeMonoid
             begin
               a ≈⟨ a≈x ⟩
               x ≈⟨ sym b∙x≈x ⟩
-              b ∙ x ≈⟨ ∙-cong b≈y refl ⟩
-              y ∙ x ≈⟨ comm _ _ ⟩
-              x ∙ y ≈⟨ ∙-cong (sym a≈x) refl ⟩
-              a ∙ y ≈⟨ a∙y≈y ⟩
-              y ≈⟨ sym b≈y ⟩
+              ⌞ b ⌟ ∙ x ≈⟨ cong! b≈y ⟩
+              y ∙ x     ≈⟨ comm _ _ ⟩
+              ⌞ x ⌟ ∙ y ≈⟨ cong! (sym a≈x) ⟩
+              a ∙ y     ≈⟨ a∙y≈y ⟩
+              y         ≈⟨ sym b≈y ⟩
               b
             ∎
 
@@ -150,12 +154,12 @@ module RequiresCommutativeMonoid
           b≈x = trans b≈a∙x a∙x≈x
           a≈b =
             begin
-              a      ≈⟨ a≈y ⟩
-              y      ≈⟨ sym b∙y≈y ⟩
-              b ∙ y  ≈⟨ ∙-cong b≈x refl ⟩
-              x ∙ y  ≈⟨ comm _ _ ⟩
-              y ∙ x  ≈⟨ ∙-cong (sym a≈y) refl ⟩
-              a ∙ x  ≈⟨ sym b≈a∙x ⟩
+              a          ≈⟨ a≈y ⟩
+              y          ≈⟨ sym b∙y≈y ⟩
+              ⌞ b ⌟ ∙ y  ≈⟨ cong! b≈x ⟩
+              x ∙ y      ≈⟨ comm _ _ ⟩
+              ⌞ y ⌟ ∙ x  ≈⟨ cong! (sym a≈y) ⟩
+              a ∙ x      ≈⟨ sym b≈a∙x ⟩
               b
             ∎
 
@@ -166,6 +170,8 @@ module RequiresCommutativeMonoid
 
 module RequiresPathAlgebra
        {c ℓ} (dijkstra : PathAlgebra c ℓ) where
+
+  open import Holes.PathAlgebra
 
   open PathAlgebra dijkstra
   open FunctionProperties _≈_
@@ -194,7 +200,7 @@ module RequiresPathAlgebra
           a≈b = trans a≈b+x b+x≈b
           b+a≈a =
             begin
-              b + a ≈⟨ +-cong (sym a≈b) refl ⟩
+              ⌞ b ⌟ + a ≈⟨ cong! (sym a≈b) ⟩
               a + a ≈⟨ +-idempotent a ⟩
               a
             ∎
@@ -203,8 +209,8 @@ module RequiresPathAlgebra
           a≈x = trans a≈b+x b+x≈x
           b+a≈a =
             begin
-              b + a ≈⟨ +-cong refl a≈x ⟩
-              b + x ≈⟨ sym a≈b+x ⟩
+              b + ⌞ a ⌟ ≈⟨ cong! a≈x ⟩
+              b + x     ≈⟨ sym a≈b+x ⟩
               a
             ∎
 
@@ -265,10 +271,10 @@ module RequiresPathAlgebra
 
       c+a≈a =
         begin
-          c + a        ≈⟨ +-cong refl (sym b+a≈a) ⟩
-          c + (b + a)  ≈⟨ sym $ +-assoc _ _ _ ⟩
-          (c + b) + a  ≈⟨ +-cong c+b≈b refl ⟩
-          b + a        ≈⟨ b+a≈a ⟩
+          c + ⌞ a ⌟        ≈⟨ cong! (sym b+a≈a) ⟩
+          c + (b + a)      ≈⟨ sym $ +-assoc _ _ _ ⟩
+          ⌞ c + b ⌟ + a    ≈⟨ cong! c+b≈b ⟩
+          b + a            ≈⟨ b+a≈a ⟩
           a
         ∎
 
@@ -387,20 +393,23 @@ module RequiresPathAlgebra
   0#-topᴸ : ∀ a → a ⊴ᴸ 0#
   0#-topᴸ a = a , sym (proj₁ +-identity a)
 
+  -- PathAlgebra._+_ dijkstra c (PathAlgebra._+_ dijkstra ⌞ PathAlgebra._+_ dijkstra b d ⌟ e)
+
   +-upperᴸ : ∀ {a b c} → a ⊴ᴸ b → a ⊴ᴸ c → a ⊴ᴸ b + c
   +-upperᴸ {a} {b} {c} (d , a≡b+d) (e , a≡c+e) = d + e , lemma
     where
       lemma : a ≈ b + c + (d + e)
       lemma =
         sym $ begin
-          b + c + (d + e)
-            ≈⟨ +-cong (+-comm b c) refl ⟩
+          ⌞ b + c ⌟ + (d + e)
+            ≈⟨ cong! (+-comm b c) ⟩
           c + b + (d + e)
             ≈⟨ +-assoc c b (d + e) ⟩
-          c + (b + (d + e))
-            ≈⟨ +-cong refl $ sym $ +-assoc b d e ⟩
-          c + ((b + d) + e)
-            ≈⟨ +-cong refl $ +-cong (sym a≡b+d) refl ⟩
+          c + ⌞ b + (d + e) ⌟
+            ≈⟨ cong! (sym $ +-assoc b d e) ⟩
+          c + (⌞ b + d ⌟ + e)
+            -- ≈⟨ +-cong refl $ +-cong (sym a≡b+d) refl ⟩
+            ≈⟨ cong! (sym a≡b+d) ⟩
           c + (a + e)
             ≈⟨ +-cong refl $ +-comm a e ⟩
           c + (e + a)
