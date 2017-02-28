@@ -46,6 +46,9 @@ open P.≡-Reasoning
   using ()
   renaming (begin_ to start_; _≡⟨_⟩_ to _≣⟨_⟩_; _∎ to _■)
 
+open import Holes.Term using (⌞_⌟)
+open import Holes.PathAlgebra
+
 -- Bring the algebra's operators, constants and properties into scope
 open PathAlgebra alg renaming (Carrier to Weight)
 open RequiresPathAlgebra alg
@@ -95,11 +98,12 @@ pcorrect-lemma : (step : ℕ) {s<n : suc step N≤ n} → ∀ {j k} →
                  let vs = seen step {≤-step′ s<n}
                      r = estimate step {≤-step′ s<n} in
                  j ∈ vs → k ∉ vs → r j + r k ≈ r j
-pcorrect-lemma zero {j = j} j∈vs k∉vs =
+pcorrect-lemma zero {s<n}{j}{k} j∈vs k∉vs =
   begin
-    A[ i , j ] + _  ≈⟨ +-cong lemma refl ⟩
-    1#         + _  ≈⟨ proj₁ +-zero _ ⟩
-    1#              ≈⟨ sym lemma ⟩
+    -- ⌞ A[ i , j ] ⌟ + estimate zero {≤-step′ s<n} k  ≈⟨ cong! lemma ⟩
+    ⌞ A[ i , j ] ⌟ + estimate zero {≤-step′ s<n} k  ≈⟨ +-cong lemma refl ⟩
+    1#             + estimate zero {≤-step′ s<n} k  ≈⟨ proj₁ +-zero _ ⟩
+    1#                                              ≈⟨ sym lemma ⟩
     A[ i , j ]
   ∎
   where
