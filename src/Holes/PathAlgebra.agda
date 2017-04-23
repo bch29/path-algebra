@@ -17,10 +17,10 @@ module _ {c ℓ} (pathAlgebra : PathAlgebra c ℓ) where
   *-cong₁ = two→one₁ *-cong
   *-cong₂ = two→one₂ *-cong
 
-database = (quote PathAlgebra._+_ , 1 , quote +-cong₁)
-         ∷ (quote PathAlgebra._+_ , 2 , quote +-cong₂)
-         ∷ (quote PathAlgebra._*_ , 1 , quote *-cong₂)
-         ∷ (quote PathAlgebra._*_ , 2 , quote *-cong₂)
+database = (quote PathAlgebra._+_ , 3 , quote +-cong₁)
+         ∷ (quote PathAlgebra._+_ , 4 , quote +-cong₂)
+         ∷ (quote PathAlgebra._*_ , 3 , quote *-cong₂)
+         ∷ (quote PathAlgebra._*_ , 4 , quote *-cong₂)
          ∷ []
 
 open AutoCong database public

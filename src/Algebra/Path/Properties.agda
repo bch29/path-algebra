@@ -291,13 +291,13 @@ module RequiresPathAlgebra
       a≈b : a ≈ c → a ≈ b
       a≈b a≈c =
         begin
-          a            ≈⟨ sym b+a≈a ⟩
-          b + a        ≈⟨ +-cong refl a≈c ⟩
-          b + c        ≈⟨ +-cong (sym c+b≈b) refl ⟩
-          (c + b) + c  ≈⟨ +-assoc _ _ _ ⟩
-          c + (b + c)  ≈⟨ +-cong refl (+-comm _ _) ⟩
-          c + (c + b)  ≈⟨ +-cong refl c+b≈b ⟩
-          c + b        ≈⟨ c+b≈b ⟩
+          a              ≈⟨ sym b+a≈a ⟩
+          b + ⌞ a ⌟      ≈⟨ cong! a≈c ⟩
+          ⌞ b ⌟ + c      ≈⟨ cong! (sym c+b≈b) ⟩
+          (c + b) + c    ≈⟨ +-assoc _ _ _ ⟩
+          c + ⌞ b + c ⌟  ≈⟨ cong! (+-comm b c) ⟩
+          c + ⌞ c + b ⌟  ≈⟨ cong! c+b≈b ⟩
+          c + b          ≈⟨ c+b≈b ⟩
           b
         ∎
 
@@ -316,8 +316,8 @@ module RequiresPathAlgebra
 
           c+a≈a =
             begin
-              c + a  ≈⟨ +-cong (sym b≈c) refl ⟩
-              b + a  ≈⟨ b+a≈a ⟩
+              ⌞ c ⌟ + a  ≈⟨ cong! (sym b≈c) ⟩
+              b + a      ≈⟨ b+a≈a ⟩
               a
             ∎
 
@@ -333,9 +333,9 @@ module RequiresPathAlgebra
 
           a+c≈c =
             begin
-              a + c  ≈⟨ +-cong refl (sym b≈c) ⟩
-              a + b  ≈⟨ a+b≈b ⟩
-              b      ≈⟨ b≈c ⟩
+              a + ⌞ c ⌟  ≈⟨ cong! (sym b≈c) ⟩
+              a + b      ≈⟨ a+b≈b ⟩
+              b          ≈⟨ b≈c ⟩
               c
             ∎
 
@@ -360,8 +360,8 @@ module RequiresPathAlgebra
           b≈a = trans b≈a+x a+x≈a
           a+b≈b =
             begin
-              a + b  ≈⟨ +-cong (sym b≈a) refl ⟩
-              b + b  ≈⟨ +-idempotent b ⟩
+              ⌞ a ⌟ + b  ≈⟨ cong! (sym b≈a) ⟩
+              b     + b  ≈⟨ +-idempotent b ⟩
               b
             ∎
       ... | inj₂ a+x≈x = a+b≈b
@@ -369,8 +369,8 @@ module RequiresPathAlgebra
           b≈x = trans b≈a+x a+x≈x
           a+b≈b =
             begin
-              a + b  ≈⟨ +-cong refl b≈x ⟩
-              a + x  ≈⟨ sym b≈a+x ⟩
+              a + ⌞ b ⌟  ≈⟨ cong! b≈x ⟩
+              a + x      ≈⟨ sym b≈a+x ⟩
               b
             ∎
 
@@ -407,14 +407,12 @@ module RequiresPathAlgebra
             ≈⟨ +-assoc c b (d + e) ⟩
           c + ⌞ b + (d + e) ⌟
             ≈⟨ cong! (sym $ +-assoc b d e) ⟩
-          c + ( ⌞ b + d ⌟ + e )
-            -- ≈⟨ +-cong refl $ +-cong (sym a≡b+d) refl ⟩
-            -- ≈⟨ cong! (+-cong {u = e} (sym a≡b+d) refl) ⟩
+          c + (⌞ b + d ⌟ + e)
             ≈⟨ cong! (sym a≡b+d) ⟩
           c + ⌞ a + e ⌟
             ≈⟨ cong! (+-comm a e) ⟩
           c + (e + a)
-            ≈⟨ sym (+-assoc c e a) ⟩
+            ≈⟨ sym $ +-assoc c e a ⟩
           ⌞ c + e ⌟ + a
             ≈⟨ cong! (sym a≡c+e) ⟩
           a + a

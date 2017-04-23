@@ -15,8 +15,8 @@ module _ {c ℓ} (commutativeMonoid : CommutativeMonoid c ℓ) where
   ∙-cong₁ = two→one₁ ∙-cong
   ∙-cong₂ = two→one₂ ∙-cong
 
-database = (quote CommutativeMonoid._∙_ , 1 , quote ∙-cong₁)
-         ∷ (quote CommutativeMonoid._∙_ , 2 , quote ∙-cong₂)
+database = (quote CommutativeMonoid._∙_ , 3 , quote ∙-cong₁)
+         ∷ (quote CommutativeMonoid._∙_ , 4 , quote ∙-cong₂)
          ∷ []
 
 open AutoCong database public
