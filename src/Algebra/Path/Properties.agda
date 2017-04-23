@@ -407,15 +407,16 @@ module RequiresPathAlgebra
             ≈⟨ +-assoc c b (d + e) ⟩
           c + ⌞ b + (d + e) ⌟
             ≈⟨ cong! (sym $ +-assoc b d e) ⟩
-          c + (⌞ b + d ⌟ + e)
+          c + ( ⌞ b + d ⌟ + e )
             -- ≈⟨ +-cong refl $ +-cong (sym a≡b+d) refl ⟩
+            -- ≈⟨ cong! (+-cong {u = e} (sym a≡b+d) refl) ⟩
             ≈⟨ cong! (sym a≡b+d) ⟩
-          c + (a + e)
-            ≈⟨ +-cong refl $ +-comm a e ⟩
+          c + ⌞ a + e ⌟
+            ≈⟨ cong! (+-comm a e) ⟩
           c + (e + a)
-            ≈⟨ sym $ +-assoc c e a ⟩
-          (c + e) + a
-            ≈⟨ +-cong (sym a≡c+e) refl ⟩
+            ≈⟨ sym (+-assoc c e a) ⟩
+          ⌞ c + e ⌟ + a
+            ≈⟨ cong! (sym a≡c+e) ⟩
           a + a
             ≈⟨ +-idempotent a ⟩
           a
@@ -438,4 +439,4 @@ module RequiresPathAlgebra
 
   decTotalOrderᴸ : DecTotalOrder _ _ _
   decTotalOrderᴸ =
-    record { Carrier = Carrier ; _≈_ = _≈_ ; _≤_ = _⊴ᴸ_ ; isDecTotalOrder = isDecTotalOrderᴸ }
+    record { isDecTotalOrder = isDecTotalOrderᴸ }
