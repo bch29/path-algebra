@@ -435,4 +435,4 @@ module RequiresPathAlgebra
 
   decTotalOrderᴸ : DecTotalOrder _ _ _
   decTotalOrderᴸ =
-    record { Carrier = Carrier ; _≈_ = _≈_ ; _≤_ = _⊴ᴸ_ ; isDecTotalOrder = isDecTotalOrderᴸ }
+    record { isDecTotalOrder = isDecTotalOrderᴸ }
