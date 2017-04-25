@@ -393,8 +393,6 @@ module RequiresPathAlgebra
   0#-topᴸ : ∀ a → a ⊴ᴸ 0#
   0#-topᴸ a = a , sym (proj₁ +-identity a)
 
-  -- PathAlgebra._+_ dijkstra c (PathAlgebra._+_ dijkstra ⌞ PathAlgebra._+_ dijkstra b d ⌟ e)
-
   +-upperᴸ : ∀ {a b c} → a ⊴ᴸ b → a ⊴ᴸ c → a ⊴ᴸ b + c
   +-upperᴸ {a} {b} {c} (d , a≡b+d) (e , a≡c+e) = d + e , lemma
     where
@@ -407,7 +405,7 @@ module RequiresPathAlgebra
             ≈⟨ +-assoc c b (d + e) ⟩
           c + ⌞ b + (d + e) ⌟
             ≈⟨ cong! (sym $ +-assoc b d e) ⟩
-          c + (⌞ b + d ⌟ + e)
+          c +  (⌞ b + d ⌟ + e)
             ≈⟨ cong! (sym a≡b+d) ⟩
           c + ⌞ a + e ⌟
             ≈⟨ cong! (+-comm a e) ⟩

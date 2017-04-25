@@ -100,7 +100,6 @@ pcorrect-lemma : (step : ℕ) {s<n : suc step N≤ n} → ∀ {j k} →
                  j ∈ vs → k ∉ vs → r j + r k ≈ r j
 pcorrect-lemma zero {s<n}{j}{k} j∈vs k∉vs =
   begin
-    -- ⌞ A[ i , j ] ⌟ + estimate zero {≤-step′ s<n} k  ≈⟨ cong! lemma ⟩
     ⌞ A[ i , j ] ⌟ + estimate zero {≤-step′ s<n} k  ≈⟨ +-cong lemma refl ⟩
     1#             + estimate zero {≤-step′ s<n} k  ≈⟨ proj₁ +-zero _ ⟩
     1#                                              ≈⟨ sym lemma ⟩
