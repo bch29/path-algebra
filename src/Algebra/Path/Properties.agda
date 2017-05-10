@@ -337,7 +337,6 @@ module RequiresPathAlgebra
       { isEquivalence = isEquivalence
       ; trans         = ⊲ᴸ-trans
       ; compare       = ⊲ᴸ‿tri _≈?_
-      ; <-resp-≈      = ⊲ᴸ-resp
       }
 
   equivalentᴿ : ∀ a b → a + b ≈ b ⇔ a ⊴ᴿ b
