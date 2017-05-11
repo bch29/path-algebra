@@ -47,7 +47,7 @@ open P.≡-Reasoning
   renaming (begin_ to start_; _≡⟨_⟩_ to _≣⟨_⟩_; _∎ to _■)
 
 open import Holes.Term using (⌞_⌟)
-open import Holes.PathAlgebra
+open import Holes.Cong.Propositional
 
 -- Bring the algebra's operators, constants and properties into scope
 open PathAlgebra alg renaming (Carrier to Weight)
@@ -109,8 +109,8 @@ pcorrect-lemma zero {s<n}{j}{k} j∈vs k∉vs =
     lemma : A[ i , j ] ≈ 1#
     lemma =
       begin
-        A[ i , j ]  ≡⟨ P.cong₂ A[_,_] (P.refl {x = i}) (Sub.i∈⁅i⁆′ i j j∈vs) ⟩
-        A[ i , i ]  ≈⟨ Adj.diag adj i ⟩
+        A[ i , ⌞ j ⌟ ]  ≡⟨ cong! (Sub.i∈⁅i⁆′ i j j∈vs) ⟩
+        A[ i , i ]      ≈⟨ Adj.diag adj i ⟩
         1#
       ∎
 
@@ -151,7 +151,7 @@ pcorrect-lemma (suc step) {s<n} {j} {k} j∈vs′ k∉vs′
 ... | inj₂ j∈⁅q⁆ =
   begin
     r′ j + r′ k                                          ≡⟨⟩
-    (r j + r q * A[ q , j ]) + (r k + r q * A[ q , k ])  ≡⟨ j≡q₁ ⟩
+    (r ⌞ j ⌟ + r q * A[ q , j ]) + (r k + r q * A[ q , k ])  ≡⟨ cong! j≡q ⟩
     (r q + r q * A[ q , j ]) + (r k + r q * A[ q , k ])  ≈⟨ +-cong (+-absorbs-* _ _) refl ⟩
     r q + (r k + r q * A[ q , k ])                       ≈⟨ sym (+-assoc _ _ _) ⟩
     (r q + r k) + r q * A[ q , k ]                       ≈⟨ +-cong (+-comm _ _) refl ⟩
@@ -159,7 +159,7 @@ pcorrect-lemma (suc step) {s<n} {j} {k} j∈vs′ k∉vs′
     r k + (r q + r q * A[ q , k ])                       ≈⟨ +-cong refl (+-absorbs-* _ _) ⟩
     r k + r q                                            ≈⟨ lemma ⟩
     r q                                                  ≈⟨ sym (+-absorbs-* _ _) ⟩
-    r q + r q * A[ q , j ]                               ≡⟨ j≡q₂ ⟩
+    r ⌞ q ⌟ + r q * A[ q , j ]                           ≡⟨ cong! j≡q ⟩
     r j + r q * A[ q , j ]                               ≡⟨⟩
     r′ j
   ∎
@@ -170,8 +170,6 @@ pcorrect-lemma (suc step) {s<n} {j} {k} j∈vs′ k∉vs′
     j≡q : j ≡ q
     j≡q = Sub.i∈⁅i⁆′ {suc n} q j j∈⁅q⁆
 
-    j≡q₁ = P.cong₂ _+_ (P.cong₂ _+_ (P.cong r j≡q) P.refl) P.refl
-    j≡q₂ = P.cong₂ _+_ (P.cong r (P.sym j≡q)) P.refl
     lemma = q-lemma step {≤-step′ s<n} k (not-seen step k k∉vs′)
 
 -- The distance estimate of a vertex stays the same once it has been visited.

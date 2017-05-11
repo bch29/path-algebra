@@ -14,6 +14,9 @@ open import Data.Nat
   using (ℕ; zero; suc; z≤n)
   renaming (_≤_ to _N≤_)
 
+open import Holes.Term using (⌞_⌟)
+open import Holes.Cong.Propositional
+
 module Dijkstra.Correctness
     {c ℓ} (alg : PathAlgebra c ℓ)
     {n} (i : Fin (suc n)) (adj : Adj.Adj alg (suc n))
@@ -70,13 +73,13 @@ pcorrect : (step : ℕ) {s≤n : step N≤ n} → ∀ j → pRLS step {s≤n} j
 pcorrect zero {s≤n} j with i FP.≟ j
 ... | yes i≡j =
   begin
-    r j             ≡⟨⟩
-    A[ i , j ]      ≡⟨ P.cong₂ A[_,_] (P.refl {x = i}) j≡i ⟩
-    A[ i , i ]      ≈⟨ Adj.diag adj i ⟩
-    1#              ≈⟨ sym (proj₁ +-zero _) ⟩
-    1#         + _  ≈⟨ +-cong (sym (Adj.diag I j)) refl ⟩
-    I[ j , j ] + _  ≡⟨ P.cong₂ _+_ (P.cong₂ I[_,_] j≡i (P.refl {x = j})) P.refl ⟩
-    I[ i , j ] + _
+    r j                 ≡⟨⟩
+    A[ i , ⌞ j ⌟ ]      ≡⟨ cong! j≡i ⟩
+    A[ i , i ]          ≈⟨ Adj.diag adj i ⟩
+    1#                  ≈⟨ sym (proj₁ +-zero _) ⟩
+    1#             + _  ≈⟨ +-cong (sym (Adj.diag I j)) refl ⟩
+    I[ ⌞ j ⌟ , j ] + _  ≡⟨ cong! j≡i ⟩
+    I[ i , j ]     + _
   ∎
   where
     r = estimate zero {z≤n}
@@ -85,8 +88,8 @@ pcorrect zero {s≤n} j with i FP.≟ j
 ... | no ¬i≡j =
   begin
     A[ i , j ]                             ≈⟨ sym (proj₁ +-identity _) ⟩
-    0#                 + A[ i , j ]        ≡⟨ P.cong₂ _+_ (P.sym diag) P.refl ⟩
-    diagonal 0# 1# i j + A[ i , j ]        ≡⟨ P.cong₂ _+_ (P.sym l∘t) P.refl ⟩
+    ⌞ 0# ⌟             + A[ i , j ]        ≡⟨ cong! diag ⟩
+    ⌞ diagonal 0# 1# i j ⌟ + A[ i , j ]    ≡⟨ cong! l∘t ⟩
     I[ i , j ]         + A[ i , j ]        ≈⟨ +-cong refl (sym (*-identityˡ _)) ⟩
     I[ i , j ]         + 1# * A[ i , j ]   ≈⟨ +-cong refl (*-cong (sym (Adj.diag adj i)) refl) ⟩
     I[ i , j ]         + r i * A[ i , j ]  ≈⟨ +-cong refl (sym fold) ⟩
